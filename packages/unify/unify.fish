@@ -41,11 +41,11 @@ end
 # Called as a trap so we cleanup all state after running or when interrupted
 # State currently means flake.lock changes or branch being swapped
 function cleanup_state
-    set current_branch (git branch --show-current)
+    set -l current_branch (git branch --show-current)
 
-    if [ $current_branch != $previous_branch ]
-        echo "Returning back to branch $previous_branch"
-        git switch --quiet $previous_branch
+    if [ $current_branch != $original_branch ]
+        echo "Returning back to branch $original_branch"
+        git switch --quiet $original_branch
     end
 
     # If flake.lock has been modified
@@ -57,7 +57,7 @@ end
 
 # Return whether we're on one of the branches stored in PRIMARY_BRANCHES
 function on_primary_branch
-    set -l current_branch $argv[1]
+    set -l current_branch (git branch --show-current)
 
     for primary_branch in $PRIMARY_BRANCHES
         if [ $current_branch = $primary_branch ]
@@ -85,14 +85,14 @@ hue $DIRECTORY || exit 1
 cd $DIRECTORY
 
 # Only set this *after* entering $DIRECTORY
-set previous_branch (git branch --show-current)
+set original_branch (git branch --show-current)
 
 # Check if we need to swap to a primary branch
-if not on_primary_branch $previous_branch
+if not on_primary_branch
 
     # Exit early if we have uncommmitted changes in non-primary branch
     if test -n "$(git status --porcelain)"
-        echo "You have uncommitted changes in your current branch `$previous_branch`."
+        echo "You have uncommitted changes in your current branch `$original_branch`."
         echo "Unify only updates flake inputs on the primary branch, as it's likely what you meant to do."
         echo "You can specify the primary branch/branches to be swapped to like this:"
         echo '`unify -p "main master"`'

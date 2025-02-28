@@ -46,10 +46,10 @@
       {
         default = pkgs.mkShellNoCC
         {
-          # Expose all packages provided by the flake, using collect to recurse into subfolders.
-          # We filter for derivations, since the output of collectDirectoryPackages leaves some
-          # functions in the packages list, which we filter out by only grabbing derivations.
-          packages = lib.collect (lib.isDerivation) self.legacyPackages.${pkgs.system};
+          # Grab all packages provided by the flake. We expect there
+          # won't be any subattrs. If they ever exist, we'd have to use
+          # something recursive, but I hope they won't.
+          packages = lib.attrValues self.legacyPackages.${pkgs.system};
         };
       }
     );

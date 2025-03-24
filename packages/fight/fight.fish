@@ -61,7 +61,12 @@ switch $host
 
 end
 
-if [ -z "$ref" ] ; or [ "$ref" = "HEAD" ] # If we don't point to a specific tag or branch
+# If we don't point to a specific tag or branch
+# Sometimes the ref will literally be "HEAD". If we don't catch it here,
+# this if statement wouldn't trigger, and we would add `--branches` and
+# `--tags`, which would break the fetch. See https://github.com/llakala/menu/pull/39
+# where this was fixed
+if [ -z "$ref" ]; or [ "$ref" = "HEAD" ]
     set newHash (git ls-remote $url "HEAD" | cut -f1)
 
 # Check both branches AND tags. We check for both the normal ref and the unpeeled ref.

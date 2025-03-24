@@ -61,7 +61,7 @@ switch $host
 
 end
 
-if [ -z "$ref" ] # If we don't point to a specific tag or branch
+if [ -z "$ref" ] ; or [ "$ref" = "HEAD" ] # If we don't point to a specific tag or branch
     set newHash (git ls-remote $url "HEAD" | cut -f1)
 
 # Check both branches AND tags. We check for both the normal ref and the unpeeled ref.

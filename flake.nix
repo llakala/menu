@@ -43,13 +43,21 @@
     devShells = forAllSystems
     (
       pkgs:
+      let
+        # Grab all packages provided by the flake. We expect there
+        # won't be any subattrs. If they ever exist, we'd have to use
+        # something recursive, but I hope they won't.
+        customPackages = lib.attrValues self.legacyPackages.${pkgs.system};
+
+        # Packages for devshell UX. nixpkgs provides gitMinimal by default these
+        # days, which doesn't provide stuff like `git send-email`, which is used by
+        # a contributor for sending patches without Github.
+        devshellPackages = with pkgs; [ git ];
+      in
       {
         default = pkgs.mkShellNoCC
         {
-          # Grab all packages provided by the flake. We expect there
-          # won't be any subattrs. If they ever exist, we'd have to use
-          # something recursive, but I hope they won't.
-          packages = lib.attrValues self.legacyPackages.${pkgs.system};
+          packages = customPackages ++ devshellPackages;
         };
       }
     );

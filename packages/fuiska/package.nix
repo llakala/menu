@@ -1,4 +1,4 @@
-{ pkgs, llakaLib, localPackages, ... }:
+{ pkgs, llakaLib, llakaPackages, localPackages }:
 
 let
   nixpkgsDeps = with pkgs;
@@ -11,13 +11,17 @@ let
   [
     hue
     fight
+  ];
+
+  llakaDeps = with llakaPackages;
+  [
     revive
   ];
 
 in llakaLib.writeFishApplication
 {
   name = "fuiska"; # Flake Updates I Should Know About?
-  runtimeInputs = nixpkgsDeps ++ selfDeps;
+  runtimeInputs = nixpkgsDeps ++ selfDeps ++ llakaDeps;
 
   text = builtins.readFile ./fuiska.fish;
 

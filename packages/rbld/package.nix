@@ -1,4 +1,4 @@
-{ pkgs, llakaLib, lib, localPackages, ... }:
+{ pkgs, llakaLib, llakaPackages, lib, localPackages }:
 
 let
   lixos-rebuild-ng = pkgs.nixos-rebuild-ng.override
@@ -14,6 +14,10 @@ let
   selfDeps = with localPackages;
   [
     hue
+  ];
+
+  llakaDeps = with llakaPackages;
+  [
     revive
   ];
 
@@ -27,7 +31,7 @@ Instead, have Menu follow nixpkgs-unstable.
 llakaLib.writeFishApplication
 {
   name = "rbld"; # Rebuild But Less Dumb
-  runtimeInputs = nixpkgsDeps ++ selfDeps;
+  runtimeInputs = nixpkgsDeps ++ selfDeps ++ llakaDeps;
 
   text = builtins.readFile ./rbld.fish;
 }

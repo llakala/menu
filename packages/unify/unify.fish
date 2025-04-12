@@ -113,6 +113,10 @@ end
 # We also catch SIGINT to ensure Ctrl+C is caught
 trap cleanup_state EXIT SIGINT
 
+# Get sudo before running `nix flake update`, since it's easy to forget to do it.
+# Let me know if this breaks your workflow!
+sudo -v || exit
+
 # Custom command that checks whether we care about updated inputs.
 # Alternative implementations coming!
 balc $INPUTS || exit

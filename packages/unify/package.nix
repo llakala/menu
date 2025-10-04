@@ -1,23 +1,13 @@
 { pkgs, llakaLib, llakaPackages, localPackages }:
 
-let
-  nixpkgsDeps = with pkgs; [
-    git
-  ];
-
-  selfDeps = with localPackages; [
-    rbld
-    hue
-    balc
-  ];
-
-  llakaDeps = with llakaPackages; [
-    revive
-  ];
-
-in llakaLib.writeFishApplication {
+llakaLib.writeFishApplication {
   name = "unify"; # Update NixOS Inputs For Yourself
-  runtimeInputs = nixpkgsDeps ++ selfDeps ++ llakaDeps;
+
+  runtimeInputs = builtins.attrValues {
+    inherit (pkgs) git;
+    inherit (localPackages) rbld hue balc;
+    inherit (llakaPackages) revive;
+  };
 
   text = builtins.readFile ./unify.fish;
 }

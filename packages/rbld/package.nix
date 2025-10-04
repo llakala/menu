@@ -1,4 +1,4 @@
-{ pkgs, llakaLib, lib, localPackages }:
+{ pkgs, lib, localPackages }:
 
 assert lib.assertMsg (pkgs ? nixos-rebuild-ng) ''
   RBLD relies on nixos-rebuild-ng, but it wasn't found in pkgs.
@@ -6,7 +6,7 @@ assert lib.assertMsg (pkgs ? nixos-rebuild-ng) ''
   Instead, have Menu follow a more recent nixpkgs version.
 '';
 
-llakaLib.writeFishApplication {
+localPackages.writeFishApplication {
   name = "rbld"; # Rebuild But Less Dumb
 
   runtimeInputs = builtins.attrValues {

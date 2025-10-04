@@ -1,6 +1,6 @@
-{ pkgs, llakaLib, localPackages }:
+{ pkgs, localPackages }:
 
-llakaLib.writeFishApplication {
+localPackages.writeFishApplication {
   name = "unify"; # Update NixOS Inputs For Yourself
 
   runtimeInputs = builtins.attrValues {

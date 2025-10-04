@@ -1,6 +1,6 @@
-{ llakaLib }:
+{ localPackages }:
 
-llakaLib.writeFishApplication {
+localPackages.writeFishApplication {
   name = "revive"; # Reuse Environment Variable If Value Encountered
 
   text = /* fish */ ''

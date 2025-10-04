@@ -1,6 +1,6 @@
-{ pkgs, llakaLib, localPackages }:
+{ pkgs, localPackages }:
 
-llakaLib.writeFishApplication {
+localPackages.writeFishApplication {
   name = "fuiska"; # Flake Updates I Should Know About?
 
   runtimeInputs = builtins.attrValues {

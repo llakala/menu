@@ -1,6 +1,6 @@
-{ pkgs, llakaLib }:
+{ pkgs, localPackages }:
 
-llakaLib.writeFishApplication {
+localPackages.writeFishApplication {
   name = "fight"; # Flake Input Gets Hash Tested
   runtimeInputs = with pkgs; [
     git

@@ -31,27 +31,28 @@
       in llakaLib.collectDirectoryPackages {
         inherit pkgs;
         directory = ./packages;
-
-        # Lets the packages rely on my custom stuff
-        extras = { inherit llakaLib; };
+        extras = {};
       }
     );
 
-    devShells = forAllSystems (pkgs:
-      let
-        # Grab all packages provided by the flake. We expect there
-        # won't be any subattrs. If they ever exist, we'd have to use
-        # something recursive, but I hope they won't.
-        customPackages = lib.attrValues self.legacyPackages.${pkgs.system};
+    devShells = forAllSystems (pkgs: {
+      default = pkgs.mkShellNoCC {
+        packages = builtins.attrValues {
+          inherit (self.legacyPackages.${pkgs.system})
+            balc
+            fight
+            fuiska
+            hue
+            rbld
+            revive
+            unify;
 
-        # Packages for devshell UX. nixpkgs provides gitMinimal by default these
-        # days, which doesn't provide stuff like `git send-email`, which is used by
-        # a contributor for sending patches without Github.
-        devshellPackages = with pkgs; [ git ];
-      in {
-        default = pkgs.mkShellNoCC {
-          packages = customPackages ++ devshellPackages;
+          # Packages for devshell UX. nixpkgs provides gitMinimal by default these
+          # days, which doesn't provide stuff like `git send-email`, which is used by
+          # a contributor for sending patches without Github.
+          inherit (pkgs) git;
         };
+      };
       }
     );
   };

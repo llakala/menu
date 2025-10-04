@@ -38,8 +38,7 @@
       }
     );
 
-    devShells = forAllSystems (
-      pkgs:
+    devShells = forAllSystems (pkgs:
       let
         # Grab all packages provided by the flake. We expect there
         # won't be any subattrs. If they ever exist, we'd have to use
@@ -56,6 +55,5 @@
         };
       }
     );
-
   };
 }

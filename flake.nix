@@ -28,13 +28,12 @@
     legacyPackages = forAllSystems (pkgs:
       let
         llakaLib = inputs.llakaLib.fullLib.${pkgs.system};
-        llakaPackages = inputs.llakaLib.packages.${pkgs.system};
       in llakaLib.collectDirectoryPackages {
         inherit pkgs;
         directory = ./packages;
 
         # Lets the packages rely on my custom stuff
-        extras = { inherit llakaLib llakaPackages; };
+        extras = { inherit llakaLib; };
       }
     );
 

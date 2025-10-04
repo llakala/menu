@@ -1,4 +1,4 @@
-{ pkgs, llakaLib, llakaPackages, lib, localPackages }:
+{ pkgs, llakaLib, lib, localPackages }:
 
 assert lib.assertMsg (pkgs ? nixos-rebuild-ng) ''
   RBLD relies on nixos-rebuild-ng, but it wasn't found in pkgs.
@@ -12,8 +12,7 @@ llakaLib.writeFishApplication {
   runtimeInputs = builtins.attrValues {
     inherit (pkgs) nix-output-monitor git;
     nixos-rebuild = pkgs.nixos-rebuild-ng.override { nix = pkgs.lix; };
-    inherit (localPackages) hue;
-    inherit (llakaPackages) revive;
+    inherit (localPackages) hue revive;
   };
 
   text = builtins.readFile ./rbld.fish;

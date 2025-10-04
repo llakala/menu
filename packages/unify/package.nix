@@ -1,25 +1,21 @@
 { pkgs, llakaLib, llakaPackages, localPackages }:
 
 let
-  nixpkgsDeps = with pkgs;
-  [
+  nixpkgsDeps = with pkgs; [
     git
   ];
 
-  selfDeps = with localPackages;
-  [
+  selfDeps = with localPackages; [
     rbld
     hue
     balc
   ];
 
-  llakaDeps = with llakaPackages;
-  [
+  llakaDeps = with llakaPackages; [
     revive
   ];
 
-in llakaLib.writeFishApplication
-{
+in llakaLib.writeFishApplication {
   name = "unify"; # Update NixOS Inputs For Yourself
   runtimeInputs = nixpkgsDeps ++ selfDeps ++ llakaDeps;
 

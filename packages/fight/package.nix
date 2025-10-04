@@ -1,10 +1,8 @@
 { pkgs, llakaLib }:
 
-llakaLib.writeFishApplication
-{
+llakaLib.writeFishApplication {
   name = "fight"; # Flake Input Gets Hash Tested
-  runtimeInputs = with pkgs;
-  [
+  runtimeInputs = with pkgs; [
     git
     jq
     ripgrep

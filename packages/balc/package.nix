@@ -1,10 +1,8 @@
 { pkgs, llakaLib }:
 
-llakaLib.writeFishApplication
-{
+llakaLib.writeFishApplication {
   name = "balc"; # Be A Little Careful
-  runtimeInputs = with pkgs;
-  [
+  runtimeInputs = with pkgs; [
     jq
     lix
   ];

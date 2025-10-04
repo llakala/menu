@@ -1,10 +1,8 @@
 { pkgs, llakaLib }:
 
-llakaLib.writeFishApplication
-{
+llakaLib.writeFishApplication {
   name = "hue"; # Handle Ugly Errors
-  runtimeInputs = with pkgs;
-  [
+  runtimeInputs = with pkgs; [
     git
     nix
   ];

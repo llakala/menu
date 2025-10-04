@@ -2,14 +2,12 @@
   # Menu stands for: My Excellent NixOS Utils
   description = "Menu, a collection of NixOS utilities.";
 
-  inputs =
-  {
+  inputs = {
     # If you want to use `follows`, make it follow your own unstable input
     # for access to nixos-rebuild-ng
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    llakaLib =
-    {
+    llakaLib = {
       url = "github:llakala/llakaLib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -26,16 +24,12 @@
     forAllSystems = function: lib.genAttrs
       supportedSystems
       (system: function nixpkgs.legacyPackages.${system});
-  in
-  {
-    legacyPackages = forAllSystems
-    (
-      pkgs:
+  in {
+    legacyPackages = forAllSystems (pkgs:
       let
         llakaLib = inputs.llakaLib.fullLib.${pkgs.system};
         llakaPackages = inputs.llakaLib.packages.${pkgs.system};
-      in llakaLib.collectDirectoryPackages
-      {
+      in llakaLib.collectDirectoryPackages {
         inherit pkgs;
         directory = ./packages;
 
@@ -44,8 +38,7 @@
       }
     );
 
-    devShells = forAllSystems
-    (
+    devShells = forAllSystems (
       pkgs:
       let
         # Grab all packages provided by the flake. We expect there
@@ -57,10 +50,8 @@
         # days, which doesn't provide stuff like `git send-email`, which is used by
         # a contributor for sending patches without Github.
         devshellPackages = with pkgs; [ git ];
-      in
-      {
-        default = pkgs.mkShellNoCC
-        {
+      in {
+        default = pkgs.mkShellNoCC {
           packages = customPackages ++ devshellPackages;
         };
       }

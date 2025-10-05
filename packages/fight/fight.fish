@@ -25,9 +25,18 @@ set host (echo $data | jq -r ".original.type")
 
 switch $host
 
-    case github gitlab git
+    case github gitlab
         # We make URL point to generic repo, and pass ref in as an argument
         set url (echo $data | jq -r '"https://" + .original.type + ".com/" + .locked.owner + "/" + .original.repo + ".git"')
+    case git
+        set url (echo $data | jq -r '.original.url')
+        # Exit early on git+ssh inputs, as we don't have any logic for parsing
+        # them right now
+        if echo $url | rg -q "^ssh://"
+            echo "WARNING: skipping input $input of type git+ssh, as there's no logic for parsing it right now"
+            exit 0
+        else
+        end
 
     case tarball
         # Flakes provide the direct tarball URL, but it's pointing to a tarball,

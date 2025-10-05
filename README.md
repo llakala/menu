@@ -17,7 +17,7 @@ Several other features are provided, to serve the goal of `unify` automatically 
 ## rbld
 `rbld`, or "Rebuild But Less Dumb", is a fairly simple `nixos-rebuild` wrapper. Its main features are adding any newly added files to the Git index via `git add -AN`, and piping output to [nix-output-monitor](https://github.com/maralorn/nix-output-monitor). There isn't much unique functionality here - you're free to use this, but you could also write your own script with very similar functionality.
 
-## Installation
+## Installation (flakes)
 To install any of these packages, add the repo to your flake inputs, as seen here:
 ```nix
 inputs = {
@@ -37,6 +37,24 @@ Then, from any module where you can access your inputs, add whichever packages y
         unify
         fuiska
     ];
+}
+```
+
+## Installation (non-flakes)
+
+First, fetch the repo in any way you like, whether it's through `fetchTarball`,
+`npins`, etc. Once it's fetched, you can install packages from it like this:
+
+```nix
+{ pkgs, ... }:
+let
+  menu = import "${sources.menu}/packages/default.nix" { inherit pkgs; };
+in {
+  environment.systemPackages = with menu; [
+    rbld
+    unify
+    fuiska
+  ];
 }
 ```
 

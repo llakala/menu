@@ -2,38 +2,18 @@
   # Menu stands for: My Excellent NixOS Utils
   description = "Menu, a collection of NixOS utilities.";
 
-  inputs = {
-    # If you want to use `follows`, make it follow your own unstable input
-    # for access to nixos-rebuild-ng
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    llakaLib = {
-      url = "github:llakala/llakaLib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-
-  outputs = { self, nixpkgs, ... } @ inputs:
+  outputs = { self, nixpkgs, ... }:
   let
     lib = nixpkgs.lib;
 
-    # The "normal" systems. If it ever doesn't work with one of these, or you want me
-    # to add a system, let me know!
-    supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
-
     forAllSystems = function: lib.genAttrs
-      supportedSystems
+      [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ]
       (system: function nixpkgs.legacyPackages.${system});
   in {
-    legacyPackages = forAllSystems (pkgs:
-      let
-        llakaLib = inputs.llakaLib.fullLib.${pkgs.system};
-      in llakaLib.collectDirectoryPackages {
-        inherit pkgs;
-        directory = ./packages;
-        extras = {};
-      }
-    );
+    # Stored in a separate file, if you'd prefer to be flakeless
+    legacyPackages = forAllSystems (pkgs: import ./packages/default.nix { inherit pkgs; });
 
     devShells = forAllSystems (pkgs: {
       default = pkgs.mkShellNoCC {

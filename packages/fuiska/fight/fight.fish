@@ -82,23 +82,32 @@ if [ -z "$ref" ]; or [ "$ref" = HEAD ]
     set newHash (git ls-remote $url "HEAD" | cut -f1)
 
 else
-    # Check both branches AND tags. We check for both the normal ref and the unpeeled ref.
-    # We need to do this because using `*` results in the branch `nixos-unstable*` also
-    # matching `nixos-unstable-small`. Unpeeling the ref will do nothing for branches, but
-    # it lets annotated tags work properly. If the tag was annotated, we'll get two lines
-    # of output, one for the lightweight, and one for the annotated - which Fish turns
-    # into a list of length 2. Lightweight and annotated tags will be in a list of length 1.
-    # We then access the last element of the list, so if the ref was an annotated tag, we
-    # grab the right part, but lightweight tags and branches still work like normal.
     # Nix doesn't unpeel tarball refs, so we don't either to compare with the revision it stores
     if [ $host != tarball ]
         set ref $ref $ref^{}
     end
 
-    set temp (git ls-remote --branches --tags $url $ref | cut -f1)
-    set newHash $temp[-1]
-end
+    # Check both branches AND tags. We check for both the normal ref and the
+    # unpeeled ref. Unpeeling the ref will do nothing for branches, but it lets
+    # annotated tags work properly.
+    set output (git ls-remote --branches --tags $url $ref | string collect)
+    set ref_hashes (echo $output | cut -f1)
+    set ref_names (echo $output | cut -f2)
 
+    # If the input used an annotated tag, we'll get a list of length two - one
+    # for the lightweight, and one for the annotated one.. Lightweight tags and
+    # branches should be in a list of length 1. However, sometimes we get an
+    # extra match here, like `refs/branches/master` and
+    # `refs/branches/update/master`. To work around this, we only use the last
+    # element in the list if it ends with `^{}`. If it doesn't, we use the first
+    # element. This is a bit of a hack - make an issue if it gives bad results
+    # for you!
+    if string match -q --regex "\^{}\$" $ref_names[-1]
+        set newHash $ref_hashes[-1]
+    else
+        set newHash $ref_hashes[1]
+    end
+end
 if [ -z "$newHash" ]
     echo "ERROR: $name failed to fetch a commit hash with url `$url` and ref `$ref`"
     exit 1

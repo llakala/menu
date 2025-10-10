@@ -1,13 +1,17 @@
 #! /usr/bin/env fish
 # We store this in a separate script from Fuiska, since Fish can't parallelize functions
 
-set input $argv[1]
-set full_contents $argv[2]
+set name $argv[1]
+set location $argv[2]
+set full_contents $argv[3]
 
-set data (echo $full_contents | jq -r --arg input $input '.nodes[$input]')
+# Sometimes a flake.lock has duplicate entries of an input, and they'll be
+# stored at `nixpkgs_2`. We access the data at the correct location, while
+# printing the name the user knows the input by
+set data (echo $full_contents | jq -r --arg location $location '.nodes[$location]')
 
 if [ -z "$data" ]
-    echo "No data found for input: $input"
+    echo "No data found for input: $name"
     exit 1
 end
 
@@ -33,7 +37,7 @@ switch $host
         # Exit early on git+ssh inputs, as we don't have any logic for parsing
         # them right now
         if echo $url | rg -q "^ssh://"
-            echo "WARNING: skipping input $input of type git+ssh, as there's no logic for parsing it right now"
+            echo "WARNING: skipping input $name of type git+ssh, as there's no logic for parsing it right now"
             exit 0
         else
         end
@@ -50,7 +54,7 @@ switch $host
         set -l both (echo $tarballUrl | rg -N --color=never --pcre2 $regexPattern --replace '$1 $2' | string split " ")
 
         if [ -z "$both" ] # URL doesn't match
-            echo "WARNING: skipping input $input of type tarball, as it can't be automatically reconstructed into a repo link"
+            echo "WARNING: skipping input $name of type tarball, as it can't be automatically reconstructed into a repo link"
             exit 0
         end
 
@@ -64,7 +68,7 @@ switch $host
         end
 
     case '*'
-        echo "WARNING: skipping input $input of type $host, as it's currently unparseable"
+        echo "WARNING: skipping input $name of type $host, as it's currently unparseable"
         exit 0
 
 end
@@ -96,10 +100,10 @@ else
 end
 
 if [ -z "$newHash" ]
-    echo "ERROR: $input failed to fetch a commit hash with url `$url` and ref `$ref`"
+    echo "ERROR: $name failed to fetch a commit hash with url `$url` and ref `$ref`"
     exit 1
 end
 
 if [ $oldHash != $newHash ]
-    echo $input
+    echo $name
 end

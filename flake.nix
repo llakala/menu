@@ -19,12 +19,8 @@
       default = pkgs.mkShellNoCC {
         packages = builtins.attrValues {
           inherit (self.legacyPackages.${pkgs.system})
-            balc
-            fight
             fuiska
-            hue
             rbld
-            revive
             unify;
 
           # Packages for devshell UX. nixpkgs provides gitMinimal by default these

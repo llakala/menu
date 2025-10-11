@@ -3,10 +3,12 @@
 let
   # See https://nix.dev/tutorials/callpackage.html#interdependent-package-sets
   # Lets packages rely on each other easily
-  callPackage = pkgs.lib.callPackageWith (pkgs // { localPackages = packages; });
+  callPackage = pkgs.lib.callPackageWith (pkgs // {
+    localPackages = packages;
+    inherit callPackage; # I love laziness!
+  });
+
   packages = {
-    balc = callPackage ./balc/package.nix {};
-    fight = callPackage ./fight/package.nix {};
     fuiska = callPackage ./fuiska/package.nix {};
     hue = callPackage ./hue/package.nix {};
     rbld = callPackage ./rbld/package.nix {};

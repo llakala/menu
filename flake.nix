@@ -21,6 +21,7 @@
           inherit (self.legacyPackages.${pkgs.system})
             fuiska
             rbld
+            imanpu
             unify;
 
           # Packages for devshell UX. nixpkgs provides gitMinimal by default these

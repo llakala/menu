@@ -1,6 +1,14 @@
 # Menu
 This repository contains QOL scripts I've written for NixOS, specifically surrounding rebuilding and updating flake inputs.
 
+## fuiska
+
+`fuiska`, or "Flake Updates I Should Know About?", serves to quickly tell you which flake inputs have been updated. `nix
+flake update` takes a long time to run, especially as your number of inputs grows. This is because it doesn't just check
+whether a given input *has* updated - it also actually fetches the new commit data. `fuiska` just checks whether the
+hash of the new commit differs, using only with `jq` and `git`. `fuiska` is also parallelized, massively speeding up
+execution. On my laptop with 15 flake inputs, `nix flake update` takes 16 seconds, while `fuiska` takes 0.5 seconds.
+
 ## unify
 
 `unify`, or "Update NixOS Inputs For Yourself", is a wrapper around `nix flake update`. Its primary feature is its
@@ -19,17 +27,14 @@ update process. These include:
   will revert the changes to the `flake.lock`. It will also automatically transfer you back onto your feature branch,
   if you were on one before starting execution.
 
-## fuiska
+`unify` and `fuiska` serve similar goals. `fuiska` aims to give the power to you directly, while `unify` aims to
+automate away the busywork. While I personally prefer the `fuiska` workflow, I keep `unify` around, since it's nice to
+be able to run it and step away.
 
-`fuiska`, or "Flake Updates I Should Know About?", serves to quickly tell you which flake inputs have been updated. `nix
-flake update` takes a long time to run, especially as your number of inputs grows. This is because it doesn't just check
-whether a given input *has* updated - it also actually fetches the new commit data. `fuiska` just checks whether the
-hash of the new commit differs, using only with `jq` and `git`. `fuiska` is also parallelized, massively speeding up
-execution. On my laptop with 15 flake inputs, `nix flake update` takes 16 seconds, while `fuiska` takes 0.5 seconds.
+## imanpu
 
-`fuiska` aims to provide a more purposeful alternative to the Unify workflow. Rather than simply providing a list of
-flake inputs that trigger a commit, `fuiska` instead just tells you the inputs that would be updated quickly, letting
-you decide whether to commit. I personally *prefer* this workflow, but this depends on the individual.
+Work-in-progress equivalent of `fuiska`, but for [npins](github.com/andir/npins). All the same selling points as
+`fuiska` - fast querying, only going through git, etc. Still very much in a proof-of-concept stage - report bugs!
 
 ## rbld
 
@@ -101,3 +106,5 @@ etc. However, to provide a custom default, environment variables can be used. Th
   non-primary branch. Default value: `main master`.
 - `UNIFY_COMMIT_MESSAGE` - the commit message that unify will use when automatically committing your `flake.lock`
   changes. Default value: `flake: update flake.lock`.
+- `IMANPU_DIRECTORY` - the directory that contains your `sources.json` file. Default value:
+  `/etc/nixos/npins/sources.json`.

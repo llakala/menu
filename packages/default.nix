@@ -11,6 +11,7 @@ let
   packages = {
     fuiska = callPackage ./fuiska/package.nix {};
     hue = callPackage ./hue/package.nix {};
+    imanpu = callPackage ./imanpu/package.nix {};
     rbld = callPackage ./rbld/package.nix {};
     revive = callPackage ./revive/package.nix {};
     unify = callPackage ./unify/package.nix {};

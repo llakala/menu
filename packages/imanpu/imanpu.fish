@@ -18,10 +18,23 @@ end
 
 set contents "$(cat "$directory/sources.json")"
 
+# Went through the commit history, and I don't currently rely on anything added
+# since version 3. I could be even more permissive, but there's only three repos
+# on github that use a version < 3, so this should be fine
 set npins_version (echo $contents | jq -r ".version")
-if [ $npins_version != 6 ]
-    echo "Unsupported version $npins_version"
+set min_version 3
+set max_version 7
+if [ $npins_version -lt $min_version ]
+    echo "Your npins lockfile is from version $npins_version"
+    echo "imanpu only supports versions $min_version-$max_version"
+    echo "Please update your lockfile with `npins upgrade`"
     return
+else if [ $npins_version -gt $max_version ]
+    echo "Your npins lockfile is from version $npins_version"
+    echo "imanpu only supports versions $min_version-$max_version"
+    echo "Please downgrade your lockfile, or make an issue at https://github.com/llakala/menu to support the new version"
+    return
+
 end
 
 set inputs (echo $contents | jq -r ".pins | keys[]")

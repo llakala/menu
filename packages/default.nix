@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs }:
 
 let
   # See https://nix.dev/tutorials/callpackage.html#interdependent-package-sets

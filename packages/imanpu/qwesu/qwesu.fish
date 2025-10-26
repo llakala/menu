@@ -36,24 +36,13 @@ switch $type
             echo $name
         end
     case Channel
-        # We do some regex magic on the current url in the lockfile to access:
-        # 1. the key that this revision _would_ have in the s3 database
-        # 2. the channel we're pointing to. s3 caps requests at 1000 objects, so
-        # to stay under 1000, we only query for objects on the current channel.
-        # We can't use the `.name` field, since it can sometimes look like
-        # `nixos-unstable`, and we really need to search for the currently
-        # unreleased version, a la `nixos-25.11`
-        set pattern 'https:\/\/releases\.nixos\.org\/(((?:nixos\/)?[^\/]*\/[^-]*-\d+\.\d+)[^\/]*)'
-        set groups (echo $data | jq -r ".url" | string match --regex $pattern -g)
-        set old_key $groups[1]
-        set channel $groups[2]
+        set channel (echo $data | jq -r ".name")
+        set old_rev (echo $data | jq -r ".url" | string match --regex --groups-only "([^.]*)\/nixexprs.tar.xz")
 
-        # Query hydra's s3 bucket for all the objects on the current channel,
-        # then access the most recent one. This is a horrible, dirty, no-good,
-        # very bad hack. Please, help me find a way to kill this.
-        set contents (curl -sS "https://nix-releases.s3.amazonaws.com/?delimiter=/&prefix=$channel")
-        set new_key (echo $contents | xq -j | jq -r '.ListBucketResult.Contents | sort_by(.LastModified) | .[-1] | .Key')
-        if [ "$old_key" != "$new_key" ]
+        set api_response (curl -sS https://prometheus.nixos.org/api/v1/query -d "query=channel_revision{channel='$channel'}")
+        set new_rev (echo $api_response | jq -r ".data.result[0].metric.revision" | string sub --length 12)
+
+        if [ $old_rev != $new_rev ]
             echo $name
         end
     case '*'

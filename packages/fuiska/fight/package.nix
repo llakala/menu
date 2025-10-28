@@ -5,7 +5,6 @@ localPackages.writeFishApplication {
   runtimeInputs = with pkgs; [
     git
     jq
-    ripgrep
   ];
 
   text = builtins.readFile ./fight.fish;

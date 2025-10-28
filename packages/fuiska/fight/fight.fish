@@ -51,7 +51,7 @@ switch $host
         set tarballUrl (echo $data | jq -r '.original.url')
         set regexPattern '(https?:\/(?:\/[^\/]+){3})\/(?:archive|releases\/download)\/(?:refs\/tags\/)?([^\/]+)(?:\/[^\/]+)?(?:\.tar\.gz|\.zip|\.tar\.xz)'
 
-        set -l both (echo $tarballUrl | rg -N --color=never --pcre2 $regexPattern --replace '$1 $2' | string split " ")
+        set -l both (echo $tarballUrl | string match $regexPattern --regex --groups-only)
 
         if [ -z "$both" ] # URL doesn't match
             echo "WARNING: skipping input $name of type tarball, as it can't be automatically reconstructed into a repo link"

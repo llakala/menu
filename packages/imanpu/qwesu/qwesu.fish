@@ -42,7 +42,7 @@ switch $type
         set api_response (curl -sS https://prometheus.nixos.org/api/v1/query -d "query=channel_revision{channel='$channel'}")
         set new_rev (echo $api_response | jq -r ".data.result[0].metric.revision" | string sub --length 12)
 
-        if [ $old_rev != $new_rev ]
+        if [ "$old_rev" != "$new_rev" ]
             echo $name
         end
     case '*'

@@ -6,6 +6,11 @@ set full_contents $argv[2]
 set data (echo $full_contents | jq -r ".pins.\"$name\"")
 set type (echo $data | jq -r ".type")
 
+set frozen (echo $data | jq -r "if .frozen then 0 else 1 end")
+if [ $frozen = 0 ]
+    return 0
+end
+
 switch $type
     case Git GitRelease
         if [ $type = Git ]

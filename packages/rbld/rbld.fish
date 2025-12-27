@@ -22,7 +22,7 @@ git add -AN
 # Rather than having to verify sudo during rebuild, we do it before. works as long as rebuild is <5 minutes
 sudo -v || exit
 
-nixos-rebuild-ng switch \
+nixos-rebuild switch \
     --ask-sudo-password --no-reexec \
     --log-format internal-json \
     --flake $directory &| nom --json || exit 1

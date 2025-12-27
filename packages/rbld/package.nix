@@ -5,7 +5,7 @@ localPackages.writeFishApplication {
 
   runtimeInputs = builtins.attrValues {
     inherit (pkgs) nix-output-monitor git;
-    nixos-rebuild = pkgs.nixos-rebuild.override { nix = pkgs.lix; };
+    nixos-rebuild = pkgs.nixos-rebuild;
     inherit (localPackages) hue revive;
   };
 

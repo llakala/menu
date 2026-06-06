@@ -42,7 +42,8 @@ switch $type
         end
     case Channel
         set channel (echo $data | jq -r ".name")
-        set old_rev (echo $data | jq -r ".url" | string match --regex --groups-only "([^.]*)\/nixexprs.tar.xz")
+        set artifact (echo $data | jq -r ".artifact")
+        set old_rev (echo $data | jq -r ".url" | string match --regex --groups-only "([^.]*)\/$artifact")
 
         set api_response (curl -sS https://prometheus.nixos.org/api/v1/query -d "query=channel_revision{channel='$channel'}")
         set new_rev (echo $api_response | jq -r ".data.result[0].metric.revision" | string sub --length 12)

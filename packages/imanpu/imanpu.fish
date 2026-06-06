@@ -22,8 +22,8 @@ set contents "$(cat "$directory/sources.json")"
 # since version 3. I could be even more permissive, but there's only three repos
 # on github that use a version < 3, so this should be fine
 set npins_version (echo $contents | jq -r ".version")
-set min_version 3
-set max_version 7
+set min_version 8
+set max_version 8
 if [ $npins_version -lt $min_version ]
     echo "Your npins lockfile is from version $npins_version"
     echo "imanpu only supports versions $min_version-$max_version"

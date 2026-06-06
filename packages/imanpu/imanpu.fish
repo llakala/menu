@@ -18,9 +18,9 @@ end
 
 set contents "$(cat "$directory/sources.json")"
 
-# Went through the commit history, and I don't currently rely on anything added
-# since version 3. I could be even more permissive, but there's only three repos
-# on github that use a version < 3, so this should be fine
+# Version 8 added a `.artifact` field for channels, which seems nice to use. I
+# could add a fallback if anyone needs it, but I think I'm the only one using
+# this
 set npins_version (echo $contents | jq -r ".version")
 set min_version 8
 set max_version 8
